@@ -5,7 +5,7 @@ export default function EnrollmentsRoutes(app) {
   /* GET /api/enrollments?user=UID&course=CID (both optional) */
   app.get("/api/enrollments", (req, res) => {
     const { user, course } = req.query;
-    if (user)   return res.json(dao.findByUser(user));
+    if (user) return res.json(dao.findByUser(user));
     if (course) return res.json(dao.findByCourse(course));
     res.json(dao.findAll());
   });
