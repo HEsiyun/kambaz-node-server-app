@@ -1,33 +1,46 @@
 // Kambaz/Assignments/dao.js
 import { v4 as uuidv4 } from "uuid";
-import initialAssignments from "../Database/assignments.js";
+import model from "./model.js";
 
-let assignments = [...initialAssignments];
+/* READ ------------------------------------------------------------ */
+export const findAllAssignments = async () =>
+  model.find().sort({ createdAt: -1 }).lean();
 
-export const findAllAssignments = () => assignments;
+export const findAssignmentsByCourse = async (cid) =>
+  model.find({ course: cid }).sort({ createdAt: -1 }).lean();
 
-export const findAssignmentsByCourse = (cid) =>
-  assignments.filter((a) => a.course === cid);
+export const findAssignmentById = async (aid) =>
+  model.findById(aid).lean();
 
-export const findAssignmentById = (aid) =>
-  assignments.find((a) => a._id === aid);
+/* CREATE ---------------------------------------------------------- */
+export const createAssignment = async (cid, assignment) => {
+  // Defensive: accept either `title` or legacy `name`
+  const payload = { ...assignment, course: cid };
+  if (!payload.title && payload.name) {
+    payload.title = payload.name;
+    delete payload.name;
+  }
 
-export const createAssignment = (assignment) => {
-  const newAssignment = { ...assignment, _id: uuidv4() };
-  assignments.push(newAssignment);
-  return newAssignment;
+  // You’re using string _id in schema, so generate one if absent
+  if (!payload._id) payload._id = uuidv4();
+
+  const doc = await model.create(payload);
+  // Return a plain object for consistency with the reads
+  return doc.toObject();
 };
 
-export const updateAssignment = (aid, updates) => {
-  const idx = assignments.findIndex((a) => a._id === aid);
-  if (idx === -1) return null;
-  assignments[idx] = { ...assignments[idx], ...updates };
-  return assignments[idx];
+/* UPDATE ---------------------------------------------------------- */
+// Return the updated document instead of a write result
+export const updateAssignment = async (aid, updates) => {
+  const payload = { ...updates };
+  if (!payload.title && payload.name) {
+    payload.title = payload.name;
+    delete payload.name;
+  }
+  return model.findByIdAndUpdate(aid, { $set: payload }, { new: true, lean: true });
 };
 
-export const deleteAssignment = (aid) => {
-  const idx = assignments.findIndex((a) => a._id === aid);
-  if (idx === -1) return null;
-  const [removed] = assignments.splice(idx, 1);
-  return removed;
-};
+/* DELETE ---------------------------------------------------------- */
+// Return the removed document (or null) – helpful to confirm
+export const deleteAssignment = async (aid) =>
+  model.findByIdAndDelete(aid, { lean: true });

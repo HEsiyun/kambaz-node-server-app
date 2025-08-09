@@ -1,41 +1,41 @@
-// Kambaz/Assignments/routes.js
 import * as dao from "./dao.js";
 
 export default function AssignmentRoutes(app) {
-  // Get all assignments or by course
-  app.get("/api/assignments", (req, res) => {
-    const { course } = req.query;
-    if (course) {
-      res.json(dao.findAssignmentsByCourse(course));
-    } else {
-      res.json(dao.findAllAssignments());
-    }
+  // list everything (optional, handy for admin)
+  app.get("/api/assignments", async (req, res) => {
+    res.json(await dao.findAllAssignments());
   });
 
-  // Get assignment by ID
-  app.get("/api/assignments/:aid", (req, res) => {
-    const a = dao.findAssignmentById(req.params.aid);
-    if (!a) return res.status(404).json({ message: "Assignment not found" });
-    res.json(a);
+  // list for a course
+  app.get("/api/courses/:cid/assignments", async (req, res) => {
+    const { cid } = req.params;
+    res.json(await dao.findAssignmentsByCourse(cid));
   });
 
-  // Create assignment
-  app.post("/api/assignments", (req, res) => {
-    const a = dao.createAssignment(req.body);
-    res.json(a);
+  // read one
+  app.get("/api/assignments/:aid", async (req, res) => {
+    const { aid } = req.params;
+    res.json(await dao.findAssignmentById(aid));
   });
 
-  // Update assignment
-  app.put("/api/assignments/:aid", (req, res) => {
-    const a = dao.updateAssignment(req.params.aid, req.body);
-    if (!a) return res.status(404).json({ message: "Assignment not found" });
-    res.json(a);
+  // create under a course
+  app.post("/api/courses/:cid/assignments", async (req, res) => {
+    const { cid } = req.params;
+    const assignment = await dao.createAssignment(cid, req.body);
+    res.json(assignment);
   });
 
-  // Delete assignment
-  app.delete("/api/assignments/:aid", (req, res) => {
-    const a = dao.deleteAssignment(req.params.aid);
-    if (!a) return res.status(404).json({ message: "Assignment not found" });
-    res.json(a);
+  // update
+  app.put("/api/assignments/:aid", async (req, res) => {
+    const { aid } = req.params;
+    const status = await dao.updateAssignment(aid, req.body);
+    res.json(status);
+  });
+
+  // delete
+  app.delete("/api/assignments/:aid", async (req, res) => {
+    const { aid } = req.params;
+    const status = await dao.deleteAssignment(aid);
+    res.json(status);
   });
 }
