@@ -10,10 +10,26 @@ import UserRoutes from "./Kambaz/Users/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
+import QuizRoutes from "./Kambaz/Quizzes/routes.js";
+import QuestionRoutes from "./Kambaz/Questions/routes.js";
 import mongoose from "mongoose";
 
-const CONNECTION_STRING = "mongodb+srv://hesiyun0603:Yale563829@kambaz.kxvqqqi.mongodb.net/kambaz?retryWrites=true&w=majority&appName=Kambaz";
-mongoose.connect(CONNECTION_STRING);
+// const CONNECTION_STRING = "mongodb+srv://hesiyun0603:Yale563829@kambaz.kxvqqqi.mongodb.net/kambaz?retryWrites=true&w=majority&appName=Kambaz";
+// mongoose.connect(CONNECTION_STRING);
+
+
+/* ---------- DB connect ---------- */
+const CONNECTION_STRING =
+  process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
+
+mongoose
+  .connect(CONNECTION_STRING)
+  .then(() => console.log("✅ Mongo connected:", CONNECTION_STRING))
+  .catch((err) => {
+    console.error("❌ Mongo connection error:", err.message);
+    process.exit(1);
+  });
+  
 const app = express();
 app.use(
   cors({
@@ -41,6 +57,8 @@ CourseRoutes(app);
 ModuleRoutes(app);
 AssignmentRoutes(app);
 EnrollmentsRoutes(app);
+QuizRoutes(app);
+QuestionRoutes(app);
 Hello(app);
 Lab5(app);
 UserRoutes(app);
