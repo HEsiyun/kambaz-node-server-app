@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
 
-const choiceSchema = new mongoose.Schema(
-  {
-    _id: String,             // e.g., "c1"
-    text: String,
-    isCorrect: Boolean
-  },
-  { _id: false }
-);
+const choiceSchema = new mongoose.Schema({
+  _id: String,            // keep our own ids for choices
+  text: String,
+  isCorrect: Boolean,
+});
 
 const questionSchema = new mongoose.Schema(
   {
@@ -23,10 +20,10 @@ const questionSchema = new mongoose.Schema(
     shuffle: { type: Boolean, default: true },
 
     // TF only
-    answer: Boolean, // true/false
+    correctBoolean: Boolean, 
 
     // FIB only
-    answers: [String],
+    acceptableAnswers: [String],
     caseInsensitive: { type: Boolean, default: true },
     trimInput: { type: Boolean, default: true }
   },
