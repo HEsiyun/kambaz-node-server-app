@@ -26,7 +26,9 @@ export const createQuestion = async (qid, data = {}) => {
   return QuestionModel.create(base);
 };
 
-export const updateQuestion = (id, updates) =>
-  QuestionModel.updateOne({ _id: id }, { $set: { ...updates } });
+export const updateQuestion = async (id, updates) => {
+  await QuestionModel.updateOne({ _id: id }, { $set: { ...updates } });
+  return QuestionModel.findById(id); // return the updated doc
+};
 
 export const deleteQuestion = (id) => QuestionModel.deleteOne({ _id: id });
