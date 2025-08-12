@@ -12,6 +12,7 @@ import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
 import QuizRoutes from "./Kambaz/Quizzes/routes.js";
 import QuestionRoutes from "./Kambaz/Questions/routes.js";
+import AttemptRoutes from "./Kambaz/Questions/attempts/routes.js";
 import mongoose from "mongoose";
 
 // const CONNECTION_STRING = "mongodb+srv://hesiyun0603:Yale563829@kambaz.kxvqqqi.mongodb.net/kambaz?retryWrites=true&w=majority&appName=Kambaz";
@@ -29,7 +30,7 @@ mongoose
     console.error("❌ Mongo connection error:", err.message);
     process.exit(1);
   });
-  
+
 const app = express();
 app.use(
   cors({
@@ -59,6 +60,7 @@ AssignmentRoutes(app);
 EnrollmentsRoutes(app);
 QuizRoutes(app);
 QuestionRoutes(app);
+AttemptRoutes(app);
 Hello(app);
 Lab5(app);
 UserRoutes(app);
