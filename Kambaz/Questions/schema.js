@@ -1,31 +1,35 @@
 import mongoose from "mongoose";
 
-const choiceSchema = new mongoose.Schema({
-  _id: String,            // keep our own ids for choices
-  text: String,
-  isCorrect: Boolean,
-});
+const choiceSchema = new mongoose.Schema(
+  {
+    _id: { type: String, required: true },
+    text: { type: String, default: "" },
+    isCorrect: { type: Boolean, default: false },
+  },
+  { _id: false }
+);
 
 const questionSchema = new mongoose.Schema(
   {
-    _id: String,                                  // e.g., "QZ101-Q1"
-    quiz: { type: String, ref: "QuizModel" },     // "QZ101"
+    _id: { type: String, required: true },
+    quiz: { type: String, index: true, required: true },
+
     type: { type: String, enum: ["MC", "TF", "FIB"], required: true },
-    title: String,
-    points: { type: Number, default: 5 },
-    prompt: String,
+    title: { type: String, default: "" },
+    points: { type: Number, default: 0 },
+    prompt: { type: String, default: "" },
 
-    // MC only
+    // MC
     choices: [choiceSchema],
-    shuffle: { type: Boolean, default: true },
 
-    // TF only
-    correctBoolean: Boolean, 
+    // TF
+    correctBoolean: { type: Boolean },
 
-    // FIB only
-    acceptableAnswers: [String],
-    caseInsensitive: { type: Boolean, default: true },
-    trimInput: { type: Boolean, default: true }
+    // FIB (single-blank, used by current grader & take UI)
+    acceptableAnswers: { type: [String], default: [] },
+
+    // FIB (multi-blank authoring; first blank is mirrored into acceptableAnswers)
+    acceptableAnswersByBlank: { type: [[String]], default: undefined },
   },
   { collection: "questions", timestamps: true }
 );

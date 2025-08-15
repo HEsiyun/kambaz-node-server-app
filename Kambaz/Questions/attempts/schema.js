@@ -1,4 +1,3 @@
-// src/Questions/attempts/schema.js
 import mongoose from "mongoose";
 
 const answerSchema = new mongoose.Schema(
@@ -10,7 +9,8 @@ const answerSchema = new mongoose.Schema(
     // student answers (one of these depending on type)
     choiceId: String,          // MC
     booleanAnswer: Boolean,    // TF
-    textAnswer: String,        // FIB (raw)
+    textAnswer: String,        // FIB (joined for backward compat)
+    textAnswers: [String],     // FIB (NEW) per-blank answers
 
     // grading
     correct: Boolean,
